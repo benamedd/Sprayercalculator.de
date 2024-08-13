@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Rate Calculator</title>
+  <link rel="stylesheet" href="application-rate.css">
+  <link rel="stylesheet" href="responsive.css"> <!-- Link to responsive styles -->
+</head>
+<body>
+  <div class="container">
+    <h1>Application Rate Calculator</h1>
+    <div class="input-group">
+      <label for="meanVolume">Mean Volume per Nozzle (l/m):</label>
+      <input type="number" id="meanVolume" placeholder="Enter mean volume per nozzle" step="0.01">
+    </div>
+    <div class="input-group">
+      <label for="speed">Speed of Tractor (km/h):</label>
+      <input type="number" id="speed" placeholder="Enter speed of tractor" step="0.01">
+    </div>
+    <div class="input-group">
+      <label for="spacing">Nozzle Spacing (m):</label>
+      <input type="number" id="spacing" placeholder="Enter nozzle spacing" step="0.01">
+    </div>
+    <button id="calculateButton">Calculate</button>
+    <div class="result">
+      <strong>Volume (L/ha):</strong> <span id="volume">0</span>
+    </div>
+    <button id="refreshButton">Refresh</button>
+    <button id="backButton">Back</button>
+  </div>
+
+  <script src="application-rate.js"></script>
+</body>
+</html>

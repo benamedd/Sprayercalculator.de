@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Calculator</title>
+  <link rel="stylesheet" href="area-calculator.css">
+  <link rel="stylesheet" href="responsive.css"> <!-- Link to responsive styles -->
+</head>
+<body>
+  <h1>Area Calculator</h1>
+  <div id="controlPanel">
+    <label for="length">Length (m):</label>
+    <input type="number" id="length" placeholder="Enter length">
+    <label for="width">Width (m):</label>
+    <input type="number" id="width" placeholder="Enter width">
+    <button onclick="calculateArea()">Calculate Area</button>
+    <button onclick="clearInputs()">Clear</button>
+    <button onclick="goBack()">Back to Menu</button>
+  </div>
+  <p id="result"></p>
+
+  <script src="area-calculator.js"></script>
+</body>
+</html>

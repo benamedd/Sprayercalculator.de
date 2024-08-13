@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nozzle Flow Rate Checker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f8f9fa;
+      color: #343a40;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .nozzle-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .nozzle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .nozzle input {
+      width: 60px;
+      text-align: center;
+      padding: 5px;
+      border: 1px solid #ced4da;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .status {
+      font-weight: bold;
+      margin-top: 5px;
+      color: red;
+    }
+
+    #controlPanel {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #backButton {
+      background-color: #6c757d;
+    }
+
+    #backButton:hover {
+      background-color: #5a6268;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 600px) {
+      .nozzle-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .nozzle {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .nozzle input {
+        width: 80%;
+      }
+
+      button {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      #controlPanel {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        align-items: stretch;
+      }
+
+      #nozzleCount {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Nozzle Flow Rate Checker</h1>
+  <div id="controlPanel">
+    <input type="number" id="nozzleCount" placeholder="Number of Nozzles" style="padding: 10px; border-radius: 5px; border: 1px solid #ced4da;">
+    <button onclick="generateNozzleInputs()">Generate Nozzles</button>
+    <button id="backButton" onclick="goBack()">Back</button>
+  </div>
+  <div class="nozzle-container">
+    <!-- Nozzle inputs will be generated here -->
+  </div>
+  <button onclick="checkNozzles()">Check Nozzles</button>
+  <button onclick="refreshInputs()">Refresh</button>
+
+  <script>
+    const nozzleContainer = document.querySelector('.nozzle-container');
+    let nozzleInputs = [];
+    let averageFlowRate = 0;
+
+    function generateNozzleInputs() {
+      const nozzleCount = parseInt(document.getElementById('nozzleCount').value);
+      nozzleContainer.innerHTML = ''; // Clear previous inputs
+      nozzleInputs = [];
+
+      for (let i = 0; i < nozzleCount; i++) {
+        const nozzleDiv = document.createElement('div');
+        nozzleDiv.classList.add('nozzle');
+
+        const nozzleInput = document.createElement('input');
+        nozzleInput.type = 'number';
+        nozzleInput.placeholder = `Nozzle ${i + 1}`;
+        nozzleDiv.appendChild(nozzleInput);
+
+        const status = document.createElement('span');
+        status.classList.add('status');
+        status.textContent = '';
+        nozzleDiv.appendChild(status);
+
+        nozzleContainer.appendChild(nozzleDiv);
+        nozzleInputs.push({ input: nozzleInput, status: status });
+      }
+    }
+
+    function calculateAverage() {
+      let total = 0;
+      let count = 0;
+      nozzleInputs.forEach(({ input }) => {
+        const value = parseFloat(input.value);
+        if (!isNaN(value)) {
+          total += value;
+          count++;
+        }
+      });
+      averageFlowRate = total / count;
+    }
+
+    function checkNozzles() {
+      calculateAverage();
+      const tolerance = averageFlowRate * 0.1;
+      nozzleInputs.forEach(({ input, status }) => {
+        const value = parseFloat(input.value);
+        if (!isNaN(value)) {
+          if (value > (averageFlowRate + tolerance)) {
+            status.textContent = 'High';
+          } else if (value < (averageFlowRate - tolerance)) {
+            status.textContent = 'Low';
+          } else {
+            status.textContent = '';
+          }
+        } else {
+          status.textContent = '';
+        }
+      });
+    }
+
+    function refreshInputs() {
+      nozzleInputs.forEach(({ input, status }) => {
+        input.value = '';
+        status.textContent = '';
+      });
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+</html>

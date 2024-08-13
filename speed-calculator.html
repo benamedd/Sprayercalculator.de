@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Calculator</title>
+    <link rel="stylesheet" href="speed-calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Speed Calculator</h1>
+        <div class="input-group">
+            <label for="distance">Distance (in meters):</label>
+            <input type="number" id="distance" placeholder="Enter distance">
+        </div>
+        <div class="input-group">
+            <label for="time">Time (in seconds):</label>
+            <input type="number" id="time" placeholder="Enter time">
+        </div>
+        <button id="calculateButton">Calculate</button>
+        <div class="result">
+            <strong>Speed:</strong> <span id="speed">0</span> km/h
+        </div>
+        <button id="refreshButton">Refresh</button>
+        <button id="backButton">Back</button>
+    </div>
+
+    <script src="speed-calculator.js"></script>
+</body>
+</html>

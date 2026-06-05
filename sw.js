@@ -7,42 +7,29 @@
 const CACHE_NAME = 'sprayer-calc-v1';
 
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/index.js',
-  '/script.js',
-  '/styles.css',
-  '/style.css',
-  '/responsive.css',
-  '/manifest.json',
-
-  /* -- Nozzle Uniformity -- */
-  '/nozzle-uniformity.html',
-
-  /* -- Speed Calculator -- */
-  '/speed-calculator.html',
-  '/speed-calculator.js',
-  '/speed-calculator.css',
-  '/speed-calculator-script.js',
-
-  /* -- Tank Mixing -- */
-  '/tank-mixing.html',
-  '/tank-mixing.js',
-  '/tank-mixing.css',
-
-  /* -- Application Rate -- */
-  '/application-rate.html',
-  '/application-rate.js',
-  '/application-rate.css',
-
-  /* -- Area Calculator -- */
-  '/area-calculator.html',
-  '/area-calculator.js',
-  '/area-calculator.css',
-
-  /* -- Icônes PWA -- */
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  './',
+  './index.html',
+  './styles.css',
+  './script.js',
+  './index.js',
+  './responsive.css',
+  './manifest.json',
+  './nozzle-uniformity.html',
+  './speed-calculator.html',
+  './speed-calculator.js',
+  './speed-calculator.css',
+  './speed-calculator-script.js',
+  './tank-mixing.html',
+  './tank-mixing.js',
+  './tank-mixing.css',
+  './application-rate.html',
+  './application-rate.js',
+  './application-rate.css',
+  './area-calculator.html',
+  './area-calculator.js',
+  './area-calculator.css',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png'
 ];
 
 /* ---------------------------

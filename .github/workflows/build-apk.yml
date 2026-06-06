@@ -32,7 +32,7 @@ jobs:
       - name: Install Automation Tools
         run: sudo apt-get update && sudo apt-get install -y expect
 
-      # Correction du nom du package ici : @bubblewrap/cli
+      # Installation de Bubblewrap CLI (Nom officiel du package npm)
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
@@ -45,6 +45,9 @@ jobs:
       # Utilisation d'expect pour valider les questions de l'initialisation
       - name: Initialize and Build PWA to APK
         run: |
+          # ÉTAPE CLÉ : On crée le dossier en avance pour éviter la question "Directory does not exist"
+          mkdir -p ./twa-project
+          
           expect -c '
           set timeout -1
           spawn bubblewrap init --manifest=https://benamedd.github.io/Sprayercalculator.de/manifest.json --directory=./twa-project

@@ -2,60 +2,57 @@ name: Build APK - Sprayer Calibration Tool
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-    - name: Setup Java JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    # Étape clé : Créer le fichier de configuration global de Bubblewrap
-    # pour lui indiquer directement où se trouvent Java et le SDK Android
-    # sans qu'il pose de questions.
-    - name: Configure Bubblewrap Paths
-      run: |
-        mkdir -p ~/.bubblewrap
-        echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
+      - name: Configure Bubblewrap Paths
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
 
-    - name: Install Bubblewrap
-      run: npm install -g @bubblewrap/cli
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli
 
-    # Plus besoin de 'echo "n" |' car la configuration est déjà injectée
-    - name: Initialize Bubblewrap project
-      run: |
-        bubblewrap init \
-          --manifest https://benamedd.github.io/Sprayercalculator.de/manifest.json \
-          --directory ./twa-project
-      env:
-        BUBBLEWRAP_SKIP_UPDATE_CHECK: true
+      - name: Initialize Bubblewrap project
+        run: |
+          bubblewrap init \
+            --manifest https://benamedd.github.io/Sprayercalculator.de/manifest.json \
+            --directory ./twa-project
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
-    - name: Build APK
-      run: |
-        cd twa-project
-        echo "n" | bubblewrap build --skipPwaValidation
-      env:
-        BUBBLEWRAP_SKIP_UPDATE_CHECK: true
+      - name: Build APK
+        run: |
+          cd twa-project
+          echo "n" | bubblewrap build --skipPwaValidation
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: sprayer-calc-apk
-        path: twa-project/app-release-unsigned.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprayer-calc-apk
+          path: twa-project/app-release-unsigned.apk

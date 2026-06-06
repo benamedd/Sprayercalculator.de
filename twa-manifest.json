@@ -18,46 +18,26 @@
     {
       "name": "Nozzle Uniformity",
       "shortName": "Nozzle",
-      "url": "/Sprayercalculator.de/nozzle-uniformity.html",
-      "icons": [
-        {
-          "src": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "url": "https://benamedd.github.io/Sprayercalculator.de/nozzle-uniformity.html",
+      "chosenIconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png"
     },
     {
       "name": "Application Rate",
       "shortName": "App Rate",
-      "url": "/Sprayercalculator.de/application-rate.html",
-      "icons": [
-        {
-          "src": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "url": "https://benamedd.github.io/Sprayercalculator.de/application-rate.html",
+      "chosenIconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png"
     },
     {
       "name": "Tank Mixing",
       "shortName": "Tank Mix",
-      "url": "/Sprayercalculator.de/tank-mixing.html",
-      "icons": [
-        {
-          "src": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "url": "https://benamedd.github.io/Sprayercalculator.de/tank-mixing.html",
+      "chosenIconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png"
     },
     {
       "name": "Speed Calculator",
       "shortName": "Speed",
-      "url": "/Sprayercalculator.de/speed-calculator.html",
-      "icons": [
-        {
-          "src": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "url": "https://benamedd.github.io/Sprayercalculator.de/speed-calculator.html",
+      "chosenIconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-192x192.png"
     }
   ],
   "features": {},

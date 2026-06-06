@@ -14,42 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Cette action s'occupe de toute la configuration Android et Bubblewrap en tâche de fond
+      - name: Build Android Package (APK)
+        uses: jgcmarins/pwa-to-apk@v1
         with:
-          node-version: '18'
+          manifest-url: 'https://benamedd.github.io/Sprayercalculator.de/manifest.json'
 
-      - name: Setup Java JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Configure Bubblewrap Paths
-        run: |
-          mkdir -p ~/.bubblewrap
-          echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
-
-      - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli
-
-      # ÉTAPE CORRIGÉE : On force la création du projet Android directement à partir du JSON
-      # sans passer par 'init' ou 'update' qui bloquent en boucle.
-      - name: Generate Android Project Silently
-        run: |
-          # On demande à bubblewrap de générer les fichiers sans poser de questions sur la version
-          bubblewrap build --manifest=twa-manifest.json --skipPwaValidation || true
-          
-          # Si la commande du dessus a besoin de réponses pour la clé, on lui envoie de vraies chaînes de caractères
-          # "1.0.0" pour le versionName et "yes" pour le reste.
-          echo -e "1.0.0\n1\nyes\npassword\npassword\npassword" | bubblewrap build --skipPwaValidation
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
-
-      - name: Upload APK
+      # Récupération de l'APK généré automatiquement
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk

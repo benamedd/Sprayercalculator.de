@@ -14,15 +14,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Cette action s'occupe de toute la configuration Android et Bubblewrap en tâche de fond
+      # Utilisation d'une action alternative stable et vérifiée
       - name: Build Android Package (APK)
-        uses: jgcmarins/pwa-to-apk@v1
+        uses: fluster/pwa-to-apk@v1.1
         with:
           manifest-url: 'https://benamedd.github.io/Sprayercalculator.de/manifest.json'
 
-      # Récupération de l'APK généré automatiquement
+      # Récupération de l'APK généré (l'action génère un fichier nommé apk.apk)
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk
-          path: app-release-unsigned.apk
+          path: apk.apk

@@ -1,9 +1,8 @@
-{
-  "name": "Sprayer Calibration Tool",
+{  "name": "Sprayer Calibration Tool",
   "short_name": "SprayerCalc",
   "description": "A professional tool for calibrating sprayer parameters including nozzle uniformity, speed, tank mixing and application rate. Designed for agronomists and plant protection specialists.",
-  "start_url": "/index.html",
-  "scope": "/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
@@ -12,13 +11,13 @@
   "categories": ["agriculture", "productivity", "utilities"],
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "./icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "./icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -30,25 +29,25 @@
       "name": "Nozzle Uniformity",
       "short_name": "Nozzle",
       "description": "Check nozzle uniformity",
-      "url": "/nozzle-uniformity.html"
+      "url": "./nozzle-uniformity.html"
     },
     {
       "name": "Application Rate",
       "short_name": "App Rate",
       "description": "Calculate application rate",
-      "url": "/application-rate.html"
+      "url": "./application-rate.html"
     },
     {
       "name": "Tank Mixing",
       "short_name": "Tank Mix",
       "description": "Tank mixing calculator",
-      "url": "/tank-mixing.html"
+      "url": "./tank-mixing.html"
     },
     {
       "name": "Speed Calculator",
       "short_name": "Speed",
       "description": "Speed calculator",
-      "url": "/speed-calculator.html"
+      "url": "./speed-calculator.html"
     }
   ]
 }

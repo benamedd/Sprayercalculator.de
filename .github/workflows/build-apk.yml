@@ -36,13 +36,15 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      # Étape magique : On saute l'initialisation interactive !
-      # On demande à Bubblewrap de générer le projet Android directement depuis notre fichier JSON local
+      # Étape corrigée : On force Bubblewrap à générer le projet en mode non-interactif
       - name: Generate Android Project from Local Manifest
         run: |
-          bubblewrap update --manifest=twa-manifest.json
+          # yes "" permet de valider automatiquement par "Entrée" le numéro de version ou toute autre confirmation
+          yes "" | bubblewrap update --manifest=twa-manifest.json --skipCheck
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
-      # Génération de l'APK (on passe en argument les mots de passe par défaut pour la clé de test)
+      # Génération de l'APK
       - name: Build APK
         run: |
           yes "password" | bubblewrap build --skipPwaValidation

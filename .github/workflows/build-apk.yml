@@ -36,22 +36,16 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      # On remplace le 'bubblewrap init' instable par une génération directe et silencieuse
-      - name: Initialize Bubblewrap project (Silent)
+      # Étape magique : On saute l'initialisation interactive !
+      # On demande à Bubblewrap de générer le projet Android directement depuis notre fichier JSON local
+      - name: Generate Android Project from Local Manifest
         run: |
-          mkdir -p ./twa-project
-          cd twa-project
-          
-          # Génération automatique du fichier de configuration requis par Bubblewrap
-          npx @bubblewrap/cli init --manifest=https://benamedd.github.io/Sprayercalculator.de/manifest.json --silent
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
+          bubblewrap update --manifest=twa-manifest.json
 
+      # Génération de l'APK (on passe en argument les mots de passe par défaut pour la clé de test)
       - name: Build APK
         run: |
-          cd twa-project
-          # 'yes' pour accepter la génération de la clé de signature par défaut (keystore)
-          yes "yes" | bubblewrap build --skipPwaValidation
+          yes "password" | bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
@@ -59,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk
-          path: twa-project/app-release-unsigned.apk
+          path: app-release-unsigned.apk

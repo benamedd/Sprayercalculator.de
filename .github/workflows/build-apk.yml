@@ -28,20 +28,21 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # On installe 'expect', un outil Linux fait exprès pour répondre aux questions des terminaux
+      # Installation de l'outil d'automatisation des réponses Linux
       - name: Install Automation Tools
         run: sudo apt-get update && sudo apt-get install -y expect
 
+      # Correction du nom du package ici : @bubblewrap/cli
       - name: Install Bubblewrap
-        run: npm install -g @google/bubblewrap-cli
+        run: npm install -g @bubblewrap/cli
 
-      # Configuration silencieuse des chemins Java et Android
+      # Configuration automatique et silencieuse des chemins système
       - name: Configure Bubblewrap Paths
         run: |
           mkdir -p ~/.bubblewrap
           echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
 
-      # L'étape magique : On utilise 'expect' pour injecter les réponses exactes aux questions
+      # Utilisation d'expect pour valider les questions de l'initialisation
       - name: Initialize and Build PWA to APK
         run: |
           expect -c '
@@ -58,7 +59,7 @@ jobs:
           expect "Short name:" { send "\r" }
           # 5. Demande pour l'\''ID du package (accepte par défaut)
           expect "Package ID:" { send "\r" }
-          # 6. Demande pour la version (accepte par défaut)
+          # 6. Demande pour le mode d'\''affichage (accepte par défaut)
           expect "Display mode:" { send "\r" }
           # 7. Demande pour la couleur du thème (accepte par défaut)
           expect "Theme color:" { send "\r" }
@@ -70,13 +71,14 @@ jobs:
           expect eof
           '
           
-          # Compilation de l'APK
+          # On entre dans le dossier et on lance la compilation de l'APK
           cd twa-project
-          # Génération automatique de la clé et mot de passe par défaut
+          # echo -e envoie les réponses pour la création automatique du keystore de test
           echo -e "yes\npassword\npassword\npassword\npassword\npassword\npassword\nyes" | bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
+      # Sauvegarde de l'APK généré pour le téléchargement
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:

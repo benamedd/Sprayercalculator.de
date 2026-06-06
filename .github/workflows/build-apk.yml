@@ -36,13 +36,12 @@ jobs:
           mkdir -p ~/.bubblewrap
           echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
 
-      # ÉTAPE 1 : On crée un manifest minimaliste au format Android directement en 1 seconde
+      # ÉTAPE 1 : Génération de l'architecture du projet
       - name: Generate Project Files Silently
         run: |
           mkdir -p ./twa-project
           cd twa-project
           
-          # On écrit directement le fichier de configuration que Bubblewrap génère d'habitude
           cat << 'EOF' > twa-manifest.json
           {
             "packageId": "com.benamedd.sprayercalculator",
@@ -68,25 +67,25 @@ jobs:
           }
           EOF
           
-          # On demande à bubblewrap de générer les dossiers Android SANS compiler (juste l'architecture)
-          # L'argument --skipCheck évite les questions de mise à jour
           yes "no" | bubblewrap update --skipCheck || true
 
-      # ÉTAPE 2 : On compile DIRECTEMENT avec Gradle (Zéro interactivité, vitesse maximale)
+      # ÉTAPE 2 : Correction de la ligne de syntaxe vide du Splashscreen
+      - name: Fix Gradle Bug
+        run: |
+          # Cette commande remplace la variable vide par une valeur par défaut de 0 milliseconde
+          sed -i 's/splashScreenFadeOutDuration: ,/splashScreenFadeOutDuration: 0,/g' twa-project/app/build.gradle
+
+      # ÉTAPE 3 : Compilation robuste directe par Gradle
       - name: Compile APK with Gradle
         run: |
           cd twa-project
-          # Si Bubblewrap a généré le dossier 'android-project', on y entre, sinon on reste à la racine du twa
-          if [ -d "android-project" ]; then cd android-project; fi
-          
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      # ÉTAPE 3 : On récupère l'APK généré par Gradle
+      # ÉTAPE 4 : Upload de l'APK prêt à l'emploi
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk
           path: |
-            **/build/outputs/apk/debug/*-debug.apk
-            **/build/outputs/apk/release/*-unsigned.apk
+            twa-project/app/build/outputs/apk/debug/*-debug.apk

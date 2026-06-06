@@ -38,6 +38,10 @@ jobs:
 
       - name: Initialize Bubblewrap project
         run: |
+          # 1. Création préalable du dossier pour éviter la question interactive de Bubblewrap
+          mkdir -p ./twa-project
+          
+          # 2. Initialisation automatique de Bubblewrap
           bubblewrap init \
             --manifest https://benamedd.github.io/Sprayercalculator.de/manifest.json \
             --directory ./twa-project

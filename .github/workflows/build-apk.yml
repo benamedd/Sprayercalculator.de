@@ -36,24 +36,22 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      - name: Initialize Bubblewrap project
+      # On remplace le 'bubblewrap init' instable par une génération directe et silencieuse
+      - name: Initialize Bubblewrap project (Silent)
         run: |
           mkdir -p ./twa-project
+          cd twa-project
           
-          # 'yes ""' simule un appui infini sur la touche ENTRÉE pour valider 
-          # automatiquement le domaine, le nom de l'application, etc.
-          yes "" | bubblewrap init \
-            --manifest https://benamedd.github.io/Sprayercalculator.de/manifest.json \
-            --directory ./twa-project \
-            --meta
+          # Génération automatique du fichier de configuration requis par Bubblewrap
+          npx @bubblewrap/cli init --manifest=https://benamedd.github.io/Sprayercalculator.de/manifest.json --silent
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
       - name: Build APK
         run: |
           cd twa-project
-          # 'yes ""' ou 'echo "n"' pour passer les questions de création de clés de signature
-          yes "" | bubblewrap build --skipPwaValidation
+          # 'yes' pour accepter la génération de la clé de signature par défaut (keystore)
+          yes "yes" | bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 

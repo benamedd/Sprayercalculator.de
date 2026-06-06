@@ -28,62 +28,65 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # Installation de l'outil d'automatisation des réponses Linux
-      - name: Install Automation Tools
-        run: sudo apt-get update && sudo apt-get install -y expect
-
-      # Installation de Bubblewrap CLI (Nom officiel du package npm)
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      # Configuration automatique et silencieuse des chemins système
       - name: Configure Bubblewrap Paths
         run: |
           mkdir -p ~/.bubblewrap
           echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
 
-      # Utilisation d'expect pour valider les questions de l'initialisation
-      - name: Initialize and Build PWA to APK
+      # ÉTAPE 1 : On crée un manifest minimaliste au format Android directement en 1 seconde
+      - name: Generate Project Files Silently
         run: |
-          # ÉTAPE CLÉ : On crée le dossier en avance pour éviter la question "Directory does not exist"
           mkdir -p ./twa-project
-          
-          expect -c '
-          set timeout -1
-          spawn bubblewrap init --manifest=https://benamedd.github.io/Sprayercalculator.de/manifest.json --directory=./twa-project
-          
-          # 1. Demande pour le domaine (accepte par défaut)
-          expect "Domain:" { send "\r" }
-          # 2. Demande pour l'\''URL de départ (accepte par défaut)
-          expect "URL path:" { send "\r" }
-          # 3. Demande pour le nom (accepte par défaut)
-          expect "Application name:" { send "\r" }
-          # 4. Demande pour le nom court (accepte par défaut)
-          expect "Short name:" { send "\r" }
-          # 5. Demande pour l'\''ID du package (accepte par défaut)
-          expect "Package ID:" { send "\r" }
-          # 6. Demande pour le mode d'\''affichage (accepte par défaut)
-          expect "Display mode:" { send "\r" }
-          # 7. Demande pour la couleur du thème (accepte par défaut)
-          expect "Theme color:" { send "\r" }
-          # 8. Demande pour la couleur de fond (accepte par défaut)
-          expect "Background color:" { send "\r" }
-          # 9. Demande pour la splash screen (accepte par défaut)
-          expect "Navigation color:" { send "\r" }
-          
-          expect eof
-          '
-          
-          # On entre dans le dossier et on lance la compilation de l'APK
           cd twa-project
-          # echo -e envoie les réponses pour la création automatique du keystore de test
-          echo -e "yes\npassword\npassword\npassword\npassword\npassword\npassword\nyes" | bubblewrap build --skipPwaValidation
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
+          
+          # On écrit directement le fichier de configuration que Bubblewrap génère d'habitude
+          cat << 'EOF' > twa-manifest.json
+          {
+            "packageId": "com.benamedd.sprayercalculator",
+            "host": "benamedd.github.io",
+            "name": "Sprayer Calibration Tool",
+            "shortName": "SprayerCalc",
+            "themeColor": "#007bff",
+            "backgroundColor": "#ffffff",
+            "startUrl": "/Sprayercalculator.de/index.html",
+            "iconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-512x512.png",
+            "maskableIconUrl": "https://benamedd.github.io/Sprayercalculator.de/icons/icon-512x512.png",
+            "appVersionName": "1.0.0",
+            "appVersionCode": 1,
+            "display": "standalone",
+            "orientation": "portrait",
+            "scionEnabled": true,
+            "uuid": "sprayer-calc-unique-id",
+            "shortcuts": [],
+            "features": {},
+            "alphaDependencies": false,
+            "enableNotifications": false,
+            "signingKey": { "path": "./android.keystore", "alias": "android" }
+          }
+          EOF
+          
+          # On demande à bubblewrap de générer les dossiers Android SANS compiler (juste l'architecture)
+          # L'argument --skipCheck évite les questions de mise à jour
+          yes "no" | bubblewrap update --skipCheck || true
 
-      # Sauvegarde de l'APK généré pour le téléchargement
+      # ÉTAPE 2 : On compile DIRECTEMENT avec Gradle (Zéro interactivité, vitesse maximale)
+      - name: Compile APK with Gradle
+        run: |
+          cd twa-project
+          # Si Bubblewrap a généré le dossier 'android-project', on y entre, sinon on reste à la racine du twa
+          if [ -d "android-project" ]; then cd android-project; fi
+          
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      # ÉTAPE 3 : On récupère l'APK généré par Gradle
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk
-          path: twa-project/app-release-unsigned.apk
+          path: |
+            **/build/outputs/apk/debug/*-debug.apk
+            **/build/outputs/apk/release/*-unsigned.apk

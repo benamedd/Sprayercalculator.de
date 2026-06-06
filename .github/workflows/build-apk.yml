@@ -38,20 +38,22 @@ jobs:
 
       - name: Initialize Bubblewrap project
         run: |
-          # 1. Création préalable du dossier pour éviter la question interactive de Bubblewrap
           mkdir -p ./twa-project
           
-          # 2. Initialisation automatique de Bubblewrap
-          bubblewrap init \
+          # 'yes ""' simule un appui infini sur la touche ENTRÉE pour valider 
+          # automatiquement le domaine, le nom de l'application, etc.
+          yes "" | bubblewrap init \
             --manifest https://benamedd.github.io/Sprayercalculator.de/manifest.json \
-            --directory ./twa-project
+            --directory ./twa-project \
+            --meta
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 
       - name: Build APK
         run: |
           cd twa-project
-          echo "n" | bubblewrap build --skipPwaValidation
+          # 'yes ""' ou 'echo "n"' pour passer les questions de création de clés de signature
+          yes "" | bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 

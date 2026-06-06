@@ -36,18 +36,16 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
-      # Étape corrigée : On force Bubblewrap à générer le projet en mode non-interactif
-      - name: Generate Android Project from Local Manifest
+      # ÉTAPE CORRIGÉE : On force la création du projet Android directement à partir du JSON
+      # sans passer par 'init' ou 'update' qui bloquent en boucle.
+      - name: Generate Android Project Silently
         run: |
-          # yes "" permet de valider automatiquement par "Entrée" le numéro de version ou toute autre confirmation
-          yes "" | bubblewrap update --manifest=twa-manifest.json --skipCheck
-        env:
-          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
-
-      # Génération de l'APK
-      - name: Build APK
-        run: |
-          yes "password" | bubblewrap build --skipPwaValidation
+          # On demande à bubblewrap de générer les fichiers sans poser de questions sur la version
+          bubblewrap build --manifest=twa-manifest.json --skipPwaValidation || true
+          
+          # Si la commande du dessus a besoin de réponses pour la clé, on lui envoie de vraies chaînes de caractères
+          # "1.0.0" pour le versionName et "yes" pour le reste.
+          echo -e "1.0.0\n1\nyes\npassword\npassword\npassword" | bubblewrap build --skipPwaValidation
         env:
           BUBBLEWRAP_SKIP_UPDATE_CHECK: true
 

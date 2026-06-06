@@ -14,15 +14,71 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Utilisation d'une action alternative stable et vérifiée
-      - name: Build Android Package (APK)
-        uses: fluster/pwa-to-apk@v1.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          manifest-url: 'https://benamedd.github.io/Sprayercalculator.de/manifest.json'
+          node-version: '18'
 
-      # Récupération de l'APK généré (l'action génère un fichier nommé apk.apk)
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # On installe 'expect', un outil Linux fait exprès pour répondre aux questions des terminaux
+      - name: Install Automation Tools
+        run: sudo apt-get update && sudo apt-get install -y expect
+
+      - name: Install Bubblewrap
+        run: npm install -g @google/bubblewrap-cli
+
+      # Configuration silencieuse des chemins Java et Android
+      - name: Configure Bubblewrap Paths
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"${JAVA_HOME}\",\"androidSdkPath\":\"${ANDROID_HOME}\"}" > ~/.bubblewrap/config.json
+
+      # L'étape magique : On utilise 'expect' pour injecter les réponses exactes aux questions
+      - name: Initialize and Build PWA to APK
+        run: |
+          expect -c '
+          set timeout -1
+          spawn bubblewrap init --manifest=https://benamedd.github.io/Sprayercalculator.de/manifest.json --directory=./twa-project
+          
+          # 1. Demande pour le domaine (accepte par défaut)
+          expect "Domain:" { send "\r" }
+          # 2. Demande pour l'\''URL de départ (accepte par défaut)
+          expect "URL path:" { send "\r" }
+          # 3. Demande pour le nom (accepte par défaut)
+          expect "Application name:" { send "\r" }
+          # 4. Demande pour le nom court (accepte par défaut)
+          expect "Short name:" { send "\r" }
+          # 5. Demande pour l'\''ID du package (accepte par défaut)
+          expect "Package ID:" { send "\r" }
+          # 6. Demande pour la version (accepte par défaut)
+          expect "Display mode:" { send "\r" }
+          # 7. Demande pour la couleur du thème (accepte par défaut)
+          expect "Theme color:" { send "\r" }
+          # 8. Demande pour la couleur de fond (accepte par défaut)
+          expect "Background color:" { send "\r" }
+          # 9. Demande pour la splash screen (accepte par défaut)
+          expect "Navigation color:" { send "\r" }
+          
+          expect eof
+          '
+          
+          # Compilation de l'APK
+          cd twa-project
+          # Génération automatique de la clé et mot de passe par défaut
+          echo -e "yes\npassword\npassword\npassword\npassword\npassword\npassword\nyes" | bubblewrap build --skipPwaValidation
+        env:
+          BUBBLEWRAP_SKIP_UPDATE_CHECK: true
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprayer-calc-apk
-          path: apk.apk
+          path: twa-project/app-release-unsigned.apk
